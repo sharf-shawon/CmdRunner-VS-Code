@@ -1,0 +1,28 @@
+name: Build
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build & Sign VSIX
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run compile
+      - name: Package VSIX
+        run: npx @vscode/vsce package --no-dependencies --out cmdrunner.vsix
+      - name: Upload VSIX artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cmdrunner-vsix
+          path: cmdrunner.vsix
+          retention-days: 30

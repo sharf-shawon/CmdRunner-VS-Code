@@ -1,0 +1,33 @@
+# Exclude development artifacts from VSIX package
+
+# Source TypeScript files (compiled output in out/ is included)
+src/
+tsconfig.json
+.eslintrc.json
+.prettierrc
+.gitignore
+.husky/
+commitlint.config.js
+
+# Test files
+src/test/
+out/test/
+coverage/
+.nyc_output/
+
+# Node modules
+node_modules/
+
+# CI/CD and tooling
+.github/
+.vscode/launch.json
+.vscode/tasks.json
+
+# Documentation source (not needed in extension)
+CHANGELOG.md
+
+# Environment and local overrides
+.env
+.env.local
+.cmdrunner.local
+.cmdrunner.local.yml

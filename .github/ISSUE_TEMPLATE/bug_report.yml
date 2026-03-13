@@ -1,0 +1,78 @@
+name: Bug Report
+description: Report a bug or unexpected behaviour in CmdRunner.
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to file a bug report. Please fill in as much detail as possible.
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Detailed steps that reliably reproduce the issue.
+      placeholder: |
+        1. Open a workspace that contains a `.cmdrunner` file
+        2. Click the status-bar button labelled '...'
+        3. Observe ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+      description: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+      description: What actually happened? Include error messages or screenshots if applicable.
+    validations:
+      required: true
+
+  - type: input
+    id: vscode-version
+    attributes:
+      label: VS Code version
+      placeholder: "e.g. 1.95.0"
+    validations:
+      required: true
+
+  - type: input
+    id: extension-version
+    attributes:
+      label: CmdRunner extension version
+      placeholder: "e.g. 0.1.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating System
+      options:
+        - Windows
+        - macOS
+        - Linux
+    validations:
+      required: true
+
+  - type: textarea
+    id: config
+    attributes:
+      label: Relevant `.cmdrunner` config (redact secrets)
+      description: Paste the relevant portion of your `.cmdrunner` file. **Remove any secrets or passwords.**
+      render: yaml
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Paste any relevant output from the VS Code Output panel (CmdRunner channel) or Developer Tools console.
+      render: text

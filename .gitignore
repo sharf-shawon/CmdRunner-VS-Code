@@ -1,0 +1,33 @@
+# Build output
+out/
+*.js.map
+*.d.ts.map
+
+# Dependencies
+node_modules/
+
+# VS Code extension packages
+*.vsix
+
+# Local config overrides (user-specific, not committed)
+.cmdrunner.local
+.cmdrunner.local.yml
+
+# Audit log (contains sensitive run history)
+~/.cmdrunner/audit.log
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Editor directories
+.vscode/settings.json
+.vscode/*.code-workspace
+
+# Test output
+coverage/
+.nyc_output/
+
+# Environment files
+.env
+.env.local
