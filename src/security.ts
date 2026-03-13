@@ -21,7 +21,7 @@ export class SecurityManager {
     if (!vscode.workspace.isTrusted) {
       const msg =
         'CmdRunner: This workspace is not trusted. Commands will not run until you trust the workspace.';
-      vscode.window.showErrorMessage(msg);
+      void vscode.window.showErrorMessage(msg);
       throw new Error(msg);
     }
   }
@@ -32,15 +32,17 @@ export class SecurityManager {
    */
   public showUntrustedWorkspaceWarning(): void {
     if (!vscode.workspace.isTrusted) {
-      vscode.window.showWarningMessage(
-        'CmdRunner is running in an untrusted workspace. ' +
-          'Command execution is disabled until the workspace is trusted.',
-        'Trust Workspace',
-      ).then((choice) => {
-        if (choice === 'Trust Workspace') {
-          vscode.commands.executeCommand('workbench.trust.manage');
-        }
-      });
+      void vscode.window
+        .showWarningMessage(
+          'CmdRunner is running in an untrusted workspace. ' +
+            'Command execution is disabled until the workspace is trusted.',
+          'Trust Workspace'
+        )
+        .then((choice) => {
+          if (choice === 'Trust Workspace') {
+            void vscode.commands.executeCommand('workbench.trust.manage');
+          }
+        });
     }
   }
 
@@ -59,7 +61,7 @@ export class SecurityManager {
         const re = new RegExp(pattern);
         if (re.test(command)) {
           const msg = `CmdRunner: command blocked by pattern "${pattern}": ${command}`;
-          vscode.window.showErrorMessage(msg);
+          void vscode.window.showErrorMessage(msg);
           throw new Error(msg);
         }
       } catch (err) {
@@ -79,7 +81,7 @@ export class SecurityManager {
    * @param checksum Expected hex-encoded SHA-256 digest.
    * @returns `true` if the checksum matches, `false` otherwise.
    */
-  public async verifyChecksum(command: string, checksum: string): Promise<boolean> {
+  public verifyChecksum(command: string, checksum: string): boolean {
     const digest = crypto.createHash('sha256').update(command, 'utf8').digest('hex');
     return digest === checksum.toLowerCase();
   }

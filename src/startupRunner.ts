@@ -27,12 +27,10 @@ export class StartupRunner {
     const resolver = new VariableResolver(workspaceFolder);
 
     if (config.startupMode === 'parallel') {
-      await Promise.all(
-        config.startup.map((cmd) => this._dispatch(cmd, resolver)),
-      );
+      config.startup.forEach((cmd) => this._dispatch(cmd, resolver));
     } else {
       for (const cmd of config.startup) {
-        await this._dispatch(cmd, resolver);
+        this._dispatch(cmd, resolver);
         if (config.cooldownMs > 0) {
           await delay(config.cooldownMs);
         }
@@ -48,7 +46,7 @@ export class StartupRunner {
    * @param cmd The startup command entry.
    * @param resolver Variable resolver for the current workspace.
    */
-  private async _dispatch(cmd: StartupCommand, resolver: VariableResolver): Promise<void> {
+  private _dispatch(cmd: StartupCommand, resolver: VariableResolver): void {
     const resolved = resolver.resolve(cmd.command);
     const terminal = vscode.window.createTerminal({ name: cmd.label });
     terminal.show(true);

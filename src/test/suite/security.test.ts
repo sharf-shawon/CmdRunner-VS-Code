@@ -38,22 +38,22 @@ suite('SecurityManager', () => {
     assert.strictEqual(mgr.maskSecrets(''), '');
   });
 
-  test('verifyChecksum returns true for correct hash', async () => {
+  test('verifyChecksum returns true for correct hash', () => {
     const cmd = 'npm run build';
     const hash = crypto.createHash('sha256').update(cmd, 'utf8').digest('hex');
-    const ok = await mgr.verifyChecksum(cmd, hash);
+    const ok = mgr.verifyChecksum(cmd, hash);
     assert.strictEqual(ok, true);
   });
 
-  test('verifyChecksum returns false for wrong hash', async () => {
-    const ok = await mgr.verifyChecksum('npm run build', 'deadbeef');
+  test('verifyChecksum returns false for wrong hash', () => {
+    const ok = mgr.verifyChecksum('npm run build', 'deadbeef');
     assert.strictEqual(ok, false);
   });
 
-  test('verifyChecksum is case-insensitive for the expected hash', async () => {
+  test('verifyChecksum is case-insensitive for the expected hash', () => {
     const cmd = 'echo hello';
     const hash = crypto.createHash('sha256').update(cmd, 'utf8').digest('hex');
-    const ok = await mgr.verifyChecksum(cmd, hash.toUpperCase());
+    const ok = mgr.verifyChecksum(cmd, hash.toUpperCase());
     assert.strictEqual(ok, true);
   });
 
@@ -68,10 +68,7 @@ suite('SecurityManager', () => {
       .getConfiguration('cmdrunner')
       .update('blockedPatterns', ['rm\\s+-rf'], vscode.ConfigurationTarget.Global);
     try {
-      assert.throws(
-        () => mgr.checkBlockedPatterns('rm -rf /tmp/test'),
-        /blocked by pattern/,
-      );
+      assert.throws(() => mgr.checkBlockedPatterns('rm -rf /tmp/test'), /blocked by pattern/);
     } finally {
       await vscode.workspace
         .getConfiguration('cmdrunner')

@@ -1,8 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const Mocha = require('mocha') as typeof import('mocha');
+import Mocha from 'mocha';
 
 function findTestFiles(dir: string): string[] {
   const files: string[] = [];

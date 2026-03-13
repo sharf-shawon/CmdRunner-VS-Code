@@ -16,21 +16,17 @@ suite('VariableResolver', () => {
     const result = resolver.resolve('cd ${workspaceFolder}');
     assert.ok(
       !result.includes('${workspaceFolder}'),
-      '${workspaceFolder} token should be replaced',
+      '${workspaceFolder} token should be replaced'
     );
     // In the VS Code test host, workspaceFolders[0] is the extension root.
-    const expected =
-      vscode.workspace.workspaceFolders?.[0]?.uri.fsPath ?? workspaceRoot;
+    const expected = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath ?? workspaceRoot;
     assert.ok(result.includes(expected), `resolved path should contain ${expected}`);
   });
 
   test('resolves ${userHome}', () => {
     const result = resolver.resolve('echo ${userHome}');
     assert.ok(!result.includes('${userHome}'), '${userHome} token should be replaced');
-    assert.ok(
-      result.includes(os.homedir()),
-      `result should include homedir: ${os.homedir()}`,
-    );
+    assert.ok(result.includes(os.homedir()), `result should include homedir: ${os.homedir()}`);
   });
 
   test('resolves ${datetime} to ISO 8601 format', () => {
@@ -42,10 +38,10 @@ suite('VariableResolver', () => {
     // Extract the datetime part from "log-<datetime>.txt"
     const match = result.match(/log-(.+)\.txt/);
     assert.ok(match, 'result should match expected format');
-    const dt = new Date(match![1]);
+    const dt = new Date(match[1]);
     assert.ok(
       dt >= before && dt <= after,
-      `resolved datetime ${dt.toISOString()} should be between test bounds`,
+      `resolved datetime ${dt.toISOString()} should be between test bounds`
     );
   });
 
@@ -55,7 +51,7 @@ suite('VariableResolver', () => {
     const expectedName = vscode.workspace.name ?? path.basename(workspaceRoot);
     assert.ok(
       result.includes(expectedName),
-      `result "${result}" should contain workspace name "${expectedName}"`,
+      `result "${result}" should contain workspace name "${expectedName}"`
     );
   });
 

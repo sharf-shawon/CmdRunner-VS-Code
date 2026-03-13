@@ -29,7 +29,10 @@ function parseFile(filePath: string): unknown {
  * Deep-merges `override` into `base`.  Arrays in `override` **replace** arrays
  * in `base` (they are not concatenated).
  */
-function deepMerge(base: Record<string, unknown>, override: Record<string, unknown>): Record<string, unknown> {
+function deepMerge(
+  base: Record<string, unknown>,
+  override: Record<string, unknown>
+): Record<string, unknown> {
   const result: Record<string, unknown> = { ...base };
   for (const key of Object.keys(override)) {
     const bVal = base[key];
@@ -182,7 +185,7 @@ export class ConfigLoader {
       this._onConfigChanged.fire(this._config);
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      vscode.window.showErrorMessage(msg);
+      void vscode.window.showErrorMessage(msg);
     }
   }
 }

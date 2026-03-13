@@ -7,8 +7,6 @@ const STATUS_BAR_PRIORITY = 100;
 
 /** Spinner icon shown while a command is running. */
 const ICON_RUNNING = '$(sync~spin)';
-/** Stop icon shown when clicking a running command will cancel it. */
-const ICON_STOP = '$(debug-stop)';
 /** Default play icon. */
 const ICON_PLAY = '$(play)';
 
@@ -81,7 +79,7 @@ export class StatusBarManager {
   private _createItem(cmd: CommandConfig, config: CmdRunnerConfig): void {
     const item = vscode.window.createStatusBarItem(
       vscode.StatusBarAlignment.Left,
-      STATUS_BAR_PRIORITY,
+      STATUS_BAR_PRIORITY
     );
 
     item.text = `${ICON_PLAY} ${cmd.label}`;
@@ -99,7 +97,7 @@ export class StatusBarManager {
   private _createOverflowItem(overflow: CommandConfig[], config: CmdRunnerConfig): void {
     const item = vscode.window.createStatusBarItem(
       vscode.StatusBarAlignment.Left,
-      STATUS_BAR_PRIORITY - 1,
+      STATUS_BAR_PRIORITY - 1
     );
     item.text = `$(ellipsis) +${overflow.length} more`;
     item.tooltip = 'Show all CmdRunner commands';
@@ -140,9 +138,7 @@ export class StatusBarManager {
     } else {
       item.text = `${ICON_PLAY} ${cmd.label}`;
       const tooltip =
-        exitCode !== undefined
-          ? `${cmd.command}\n\nExit code: ${exitCode}`
-          : cmd.command;
+        exitCode !== undefined ? `${cmd.command}\n\nExit code: ${exitCode}` : cmd.command;
       item.tooltip = tooltip;
       item.command = {
         command: 'cmdrunner.runCommand',
@@ -172,7 +168,7 @@ export class StatusBarManager {
   public async showOverflowPicker(
     commands: CommandConfig[],
     config: CmdRunnerConfig,
-    workspaceFolder: string,
+    workspaceFolder: string
   ): Promise<void> {
     // Build QuickPick items, inserting group separators.
     type QPI = vscode.QuickPickItem & { cmd?: CommandConfig };

@@ -27,7 +27,7 @@ const INIT_TEMPLATE = JSON.stringify(
     ],
   },
   null,
-  2,
+  2
 );
 
 /** History of recently-run command IDs (most-recent first, capped at 20). */
@@ -70,7 +70,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   context.subscriptions.push(
     { dispose: () => configLoader.dispose() },
     { dispose: () => terminalRunner.dispose() },
-    { dispose: () => statusBarManager.dispose() },
+    { dispose: () => statusBarManager.dispose() }
   );
 
   // ── Workspace trust gate ──────────────────────────────────────────────────
@@ -80,7 +80,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   context.subscriptions.push(
     vscode.workspace.onDidGrantWorkspaceTrust(() => {
       void bootstrap();
-    }),
+    })
   );
 
   // ── Initial load ──────────────────────────────────────────────────────────
@@ -98,7 +98,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       await startupRunner.runStartup(config, workspaceFolder);
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      vscode.window.showErrorMessage(msg);
+      void vscode.window.showErrorMessage(msg);
     }
   }
 
@@ -118,7 +118,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       config = newConfig;
       taskProvider.updateConfig(newConfig);
       statusBarManager.update(newConfig, workspaceFolder);
-    }),
+    })
   );
 
   // ── Walkthrough ───────────────────────────────────────────────────────────
@@ -128,19 +128,19 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   context.subscriptions.push(
     vscode.commands.registerCommand('cmdrunner.initialize', async () => {
       if (!workspaceFolder) {
-        vscode.window.showErrorMessage('CmdRunner: No workspace folder is open.');
+        void vscode.window.showErrorMessage('CmdRunner: No workspace folder is open.');
         return;
       }
       const dest = path.join(workspaceFolder, '.cmdrunner');
       if (fs.existsSync(dest)) {
-        vscode.window.showInformationMessage('CmdRunner: .cmdrunner already exists.');
+        void vscode.window.showInformationMessage('CmdRunner: .cmdrunner already exists.');
         return;
       }
       fs.writeFileSync(dest, INIT_TEMPLATE, 'utf8');
       const doc = await vscode.workspace.openTextDocument(dest);
       await vscode.window.showTextDocument(doc);
-      vscode.window.showInformationMessage('CmdRunner: .cmdrunner created!');
-    }),
+      void vscode.window.showInformationMessage('CmdRunner: .cmdrunner created!');
+    })
   );
 
   // ── Command: cmdrunner.validateConfig ─────────────────────────────────────
@@ -148,12 +148,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.commands.registerCommand('cmdrunner.validateConfig', () => {
       try {
         configLoader.load();
-        vscode.window.showInformationMessage('CmdRunner: Configuration is valid ✓');
+        void vscode.window.showInformationMessage('CmdRunner: Configuration is valid ✓');
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
-        vscode.window.showErrorMessage(msg);
+        void vscode.window.showErrorMessage(msg);
       }
-    }),
+    })
   );
 
   // ── Command: cmdrunner.switchProfile ─────────────────────────────────────
@@ -161,7 +161,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.commands.registerCommand('cmdrunner.switchProfile', async () => {
       const names = profileManager.getProfileNames(config);
       if (names.length === 0) {
-        vscode.window.showInformationMessage('CmdRunner: No profiles defined.');
+        void vscode.window.showInformationMessage('CmdRunner: No profiles defined.');
         return;
       }
       const picked = await vscode.window.showQuickPick(names, {
@@ -173,15 +173,15 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       config = profileManager.switchProfile(config, picked);
       taskProvider.updateConfig(config);
       statusBarManager.update(config, workspaceFolder);
-      vscode.window.showInformationMessage(`CmdRunner: Switched to profile "${picked}".`);
-    }),
+      void vscode.window.showInformationMessage(`CmdRunner: Switched to profile "${picked}".`);
+    })
   );
 
   // ── Command: cmdrunner.history ────────────────────────────────────────────
   context.subscriptions.push(
     vscode.commands.registerCommand('cmdrunner.history', async () => {
       if (history.length === 0) {
-        vscode.window.showInformationMessage('CmdRunner: No commands have been run yet.');
+        void vscode.window.showInformationMessage('CmdRunner: No commands have been run yet.');
         return;
       }
       const items = history
@@ -197,9 +197,16 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       }
       const cmd = config.commands.find((c) => c.id === picked.id);
       if (cmd) {
-        await runCommandById(cmd, config, workspaceFolder, securityManager, auditLog, terminalRunner);
+        await runCommandById(
+          cmd,
+          config,
+          workspaceFolder,
+          securityManager,
+          auditLog,
+          terminalRunner
+        );
       }
-    }),
+    })
   );
 
   // ── Command: cmdrunner.runCommand ─────────────────────────────────────────
@@ -214,19 +221,26 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
           cmd = commandIdOrConfig;
         }
         if (!cmd) {
-          vscode.window.showErrorMessage(`CmdRunner: Command not found.`);
+          void vscode.window.showErrorMessage(`CmdRunner: Command not found.`);
           return;
         }
-        await runCommandById(cmd, config, workspaceFolder, securityManager, auditLog, terminalRunner);
-      },
-    ),
+        await runCommandById(
+          cmd,
+          config,
+          workspaceFolder,
+          securityManager,
+          auditLog,
+          terminalRunner
+        );
+      }
+    )
   );
 
   // ── Command: cmdrunner.killCommand ────────────────────────────────────────
   context.subscriptions.push(
     vscode.commands.registerCommand('cmdrunner.killCommand', (commandId: string) => {
       terminalRunner.killCommand(commandId);
-    }),
+    })
   );
 
   // ── Command: cmdrunner.showOverflow ──────────────────────────────────────
@@ -235,8 +249,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       'cmdrunner.showOverflow',
       async (commands: CommandConfig[], cfg: CmdRunnerConfig, wf: string) => {
         await statusBarManager.showOverflowPicker(commands, cfg, wf);
-      },
-    ),
+      }
+    )
   );
 }
 
@@ -256,17 +270,17 @@ async function runCommandById(
   workspaceFolder: string,
   security: SecurityManager,
   auditLog: AuditLog,
-  runner: TerminalRunner,
+  runner: TerminalRunner
 ): Promise<void> {
   try {
     security.checkWorkspaceTrust();
     security.checkBlockedPatterns(cmd.command);
 
     if (cmd.checksum) {
-      const ok = await security.verifyChecksum(cmd.command, cmd.checksum);
+      const ok = security.verifyChecksum(cmd.command, cmd.checksum);
       if (!ok) {
-        vscode.window.showErrorMessage(
-          `CmdRunner: checksum mismatch for command "${cmd.id}". Execution blocked.`,
+        void vscode.window.showErrorMessage(
+          `CmdRunner: checksum mismatch for command "${cmd.id}". Execution blocked.`
         );
         return;
       }
@@ -283,7 +297,7 @@ async function runCommandById(
     await runner.runCommand(cmd, config, workspaceFolder);
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    vscode.window.showErrorMessage(msg);
+    void vscode.window.showErrorMessage(msg);
   }
 }
 
