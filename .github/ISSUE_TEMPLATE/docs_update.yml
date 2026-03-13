@@ -1,0 +1,37 @@
+name: Docs Update
+description: Report missing, incorrect, or outdated documentation.
+title: "[Docs]: "
+labels: [documentation]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping improve the CmdRunner documentation!
+
+  - type: input
+    id: location
+    attributes:
+      label: Document location
+      description: Which file or section needs updating? (e.g. `docs/configuration-reference.md`, README §Security Model)
+    validations:
+      required: true
+
+  - type: textarea
+    id: current
+    attributes:
+      label: Current content (if applicable)
+      description: Quote or describe the existing content that is wrong or missing.
+
+  - type: textarea
+    id: suggested
+    attributes:
+      label: Suggested improvement
+      description: What should the documentation say instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Any links, screenshots, or references that would help.

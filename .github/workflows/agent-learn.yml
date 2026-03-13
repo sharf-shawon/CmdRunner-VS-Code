@@ -1,0 +1,85 @@
+name: Agent Learn
+on:
+  schedule:
+    # Weekly on Sunday at 03:00 UTC
+    - cron: '0 3 * * 0'
+  workflow_dispatch:
+
+jobs:
+  update-knowledge-base:
+    name: Update agent knowledge base
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Fetch merged PRs and closed issues from last 7 days
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+
+            const { data: prs } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'closed',
+              sort: 'updated',
+              direction: 'desc',
+              per_page: 30,
+            });
+            const mergedPrs = prs.filter(pr => pr.merged_at && pr.merged_at >= since);
+
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'closed',
+              since,
+              per_page: 30,
+            });
+            const closedIssues = issues.filter(i => !i.pull_request);
+
+            const today = new Date().toISOString().split('T')[0];
+            const lines = [`\n<!-- agent-learn: weekly update ${today} -->`];
+
+            for (const pr of mergedPrs) {
+              lines.push(`\n[${today}][merged-pr] #${pr.number} – ${pr.title}`);
+            }
+            for (const issue of closedIssues) {
+              lines.push(`[${today}][closed-issue] #${issue.number} – ${issue.title}`);
+            }
+
+            if (lines.length === 1) {
+              console.log('No activity to append.');
+              fs.writeFileSync('HAS_CHANGES', 'false');
+            } else {
+              fs.appendFileSync('docs/agent-knowledge-base.md', lines.join('\n') + '\n');
+              fs.writeFileSync('HAS_CHANGES', 'true');
+            }
+
+      - name: Open PR with knowledge-base update
+        if: ${{ hashFiles('HAS_CHANGES') != '' }}
+        run: |
+          HAS=$(cat HAS_CHANGES)
+          if [ "$HAS" = "true" ]; then
+            git config user.name  "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            BRANCH="agent-learn/$(date +%Y-%m-%d)"
+            git checkout -b "$BRANCH"
+            git add docs/agent-knowledge-base.md
+            git commit -m "docs: agent-learn weekly knowledge-base update $(date +%Y-%m-%d)"
+            git push origin "$BRANCH"
+            gh pr create \
+              --title "docs: agent-learn weekly knowledge-base update $(date +%Y-%m-%d)" \
+              --body "Automated weekly update of \`docs/agent-knowledge-base.md\` from merged PRs and closed issues." \
+              --base main \
+              --head "$BRANCH"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
