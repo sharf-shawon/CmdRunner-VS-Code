@@ -1,0 +1,90 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://cmdrunner.dev/schema/cmdrunner.schema.json",
+  "title": "CmdRunner Configuration",
+  "description": "Configuration file for the CmdRunner VS Code extension",
+  "type": "object",
+  "properties": {
+    "$schema": { "type": "string" },
+    "display": {
+      "type": "string",
+      "enum": ["auto", "sidebar", "dropdown"],
+      "default": "auto",
+      "description": "How commands appear in the status bar"
+    },
+    "maxVisible": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 5,
+      "description": "Max inline buttons before overflow to QuickPick dropdown"
+    },
+    "terminalProfile": {
+      "type": "string",
+      "default": "default",
+      "description": "Default terminal profile for commands"
+    },
+    "startupMode": {
+      "type": "string",
+      "enum": ["sequential", "parallel"],
+      "default": "sequential"
+    },
+    "cooldownMs": { "type": "integer", "minimum": 0, "default": 1000 },
+    "profiles": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/definitions/Profile" }
+    },
+    "activeProfile": { "type": "string" },
+    "startup": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/StartupCommand" }
+    },
+    "commands": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/CommandConfig" }
+    }
+  },
+  "definitions": {
+    "Profile": {
+      "type": "object",
+      "properties": {
+        "env": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        }
+      }
+    },
+    "StartupCommand": {
+      "type": "object",
+      "required": ["label", "command"],
+      "properties": {
+        "label": { "type": "string" },
+        "command": { "type": "string" }
+      }
+    },
+    "CommandConfig": {
+      "type": "object",
+      "required": ["id", "label", "command"],
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier for the command" },
+        "label": {
+          "type": "string",
+          "description": "Display label (supports VS Code icons like $(play))"
+        },
+        "command": { "type": "string", "description": "Shell command to execute" },
+        "terminal": { "type": "string" },
+        "group": { "type": "string" },
+        "cwd": { "type": "string" },
+        "color": { "type": "string" },
+        "reuseTerminal": { "type": "boolean", "default": true },
+        "keybinding": { "type": "string" },
+        "dependsOn": { "type": "array", "items": { "type": "string" } },
+        "env": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "checksum": { "type": "string" },
+        "terminalProfile": { "type": "string" }
+      }
+    }
+  }
+}

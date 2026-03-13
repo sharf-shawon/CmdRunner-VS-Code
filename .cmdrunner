@@ -1,0 +1,41 @@
+{
+  "$schema": "./.vscode/cmdrunner.schema.json",
+  "display": "auto",
+  "maxVisible": 5,
+  "startupMode": "sequential",
+  "cooldownMs": 500,
+  "commands": [
+    {
+      "id": "compile",
+      "label": "$(tools) Compile",
+      "command": "npm run compile",
+      "terminal": "Build",
+      "group": "Dev",
+      "reuseTerminal": true
+    },
+    {
+      "id": "test",
+      "label": "$(beaker) Test",
+      "command": "npm test",
+      "terminal": "Tests",
+      "group": "Dev",
+      "reuseTerminal": false
+    },
+    {
+      "id": "lint",
+      "label": "$(warning) Lint",
+      "command": "npm run lint",
+      "terminal": "Lint",
+      "group": "Dev",
+      "reuseTerminal": true
+    },
+    {
+      "id": "watch",
+      "label": "$(eye) Watch",
+      "command": "npm run watch",
+      "terminal": "Watch",
+      "group": "Dev",
+      "reuseTerminal": true
+    }
+  ]
+}

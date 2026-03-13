@@ -52,6 +52,7 @@ function deepMerge(base: Record<string, unknown>, override: Record<string, unkno
 
 /**
  * Loads and validates the CmdRunner configuration for a given workspace root.
+ * Exported for unit testing.
  *
  * Resolution order:
  * 1. `.cmdrunner` (JSON) or `.cmdrunner.yml` (YAML) — primary config.
@@ -60,7 +61,7 @@ function deepMerge(base: Record<string, unknown>, override: Record<string, unkno
  * @param workspaceRoot Absolute path to the workspace folder.
  * @returns Validated {@link CmdRunnerConfig}, or a default config if no file exists.
  */
-function loadConfig(workspaceRoot: string): CmdRunnerConfig {
+export function loadConfig(workspaceRoot: string): CmdRunnerConfig {
   let raw: Record<string, unknown> = {};
 
   // Load primary config file.
