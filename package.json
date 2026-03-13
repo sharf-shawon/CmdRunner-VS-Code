@@ -1,0 +1,224 @@
+{
+  "name": "cmdrunner",
+  "displayName": "CmdRunner",
+  "version": "0.1.0",
+  "publisher": "cmdrunner",
+  "description": "Configure and run terminal commands from clickable status bar buttons",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cmdrunner/CmdRunner-VS-Code"
+  },
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "terminal",
+    "commands",
+    "statusbar",
+    "runner",
+    "productivity"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "cmdrunner.initialize",
+        "title": "CmdRunner: Initialize Config"
+      },
+      {
+        "command": "cmdrunner.validateConfig",
+        "title": "CmdRunner: Validate Config"
+      },
+      {
+        "command": "cmdrunner.switchProfile",
+        "title": "CmdRunner: Switch Profile"
+      },
+      {
+        "command": "cmdrunner.history",
+        "title": "CmdRunner: Show History"
+      },
+      {
+        "command": "cmdrunner.runCommand",
+        "title": "CmdRunner: Run Command"
+      }
+    ],
+    "configuration": {
+      "title": "CmdRunner",
+      "properties": {
+        "cmdrunner.maxVisible": {
+          "type": "number",
+          "default": 5,
+          "minimum": 1,
+          "maximum": 20,
+          "description": "Maximum number of status bar buttons visible at once."
+        },
+        "cmdrunner.blockedPatterns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Glob/regex patterns of commands that are blocked from running."
+        },
+        "cmdrunner.defaultProfile": {
+          "type": "string",
+          "default": "default",
+          "description": "The profile to activate on startup."
+        },
+        "cmdrunner.auditLog": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable audit logging of all executed commands."
+        },
+        "cmdrunner.display": {
+          "type": "object",
+          "default": {},
+          "description": "Display overrides (icon, color, tooltip) for individual commands.",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "icon": {
+                "type": "string"
+              },
+              "color": {
+                "type": "string"
+              },
+              "tooltip": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "jsonValidation": [
+      {
+        "fileMatch": ".cmdrunner",
+        "url": "./.vscode/cmdrunner.schema.json"
+      },
+      {
+        "fileMatch": ".cmdrunner.yml",
+        "url": "./.vscode/cmdrunner.schema.json"
+      }
+    ],
+    "walkthroughs": [
+      {
+        "id": "cmdrunner.onboarding",
+        "title": "Get Started with CmdRunner",
+        "description": "Learn how to configure and use CmdRunner to run terminal commands from the status bar.",
+        "steps": [
+          {
+            "id": "cmdrunner.onboarding.initialize",
+            "title": "Initialize Your Config",
+            "description": "Run **CmdRunner: Initialize Config** to create a `.cmdrunner` file in your workspace.\n[Initialize Config](command:cmdrunner.initialize)",
+            "media": {
+              "markdown": "media/walkthrough/initialize.md"
+            }
+          },
+          {
+            "id": "cmdrunner.onboarding.addCommand",
+            "title": "Add Your First Command",
+            "description": "Open `.cmdrunner` and add a command entry with a label, command string, and optional icon.",
+            "media": {
+              "markdown": "media/walkthrough/add-command.md"
+            }
+          },
+          {
+            "id": "cmdrunner.onboarding.switchProfile",
+            "title": "Use Profiles",
+            "description": "Switch between profiles to manage different sets of commands per project context.\n[Switch Profile](command:cmdrunner.switchProfile)",
+            "media": {
+              "markdown": "media/walkthrough/profiles.md"
+            }
+          }
+        ]
+      }
+    ],
+    "taskDefinitions": [
+      {
+        "type": "cmdrunner",
+        "required": [
+          "command"
+        ],
+        "properties": {
+          "command": {
+            "type": "string",
+            "description": "The command key from your .cmdrunner config to run as a VS Code task."
+          },
+          "profile": {
+            "type": "string",
+            "description": "The profile to use when resolving the command. Defaults to the active profile."
+          }
+        }
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "test": "node ./out/test/runTests.js",
+    "lint": "eslint src --ext ts",
+    "lint:fix": "eslint src --ext ts --fix",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\"",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.3.0",
+    "@commitlint/config-conventional": "^19.2.2",
+    "@types/js-yaml": "^4.0.9",
+    "@types/mocha": "^10.0.7",
+    "@types/node": "^20.14.9",
+    "@types/vscode": "^1.90.0",
+    "@typescript-eslint/eslint-plugin": "^7.16.0",
+    "@typescript-eslint/parser": "^7.16.0",
+    "@vscode/test-electron": "^2.4.0",
+    "c8": "^10.1.2",
+    "eslint": "^8.57.0",
+    "husky": "^9.0.11",
+    "js-yaml": "^4.1.0",
+    "lint-staged": "^15.2.7",
+    "mocha": "^10.6.0",
+    "prettier": "^3.3.3",
+    "typescript": "^5.5.3"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0",
+    "zod": "^3.23.8"
+  },
+  "lint-staged": {
+    "src/**/*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  },
+  "c8": {
+    "all": true,
+    "include": [
+      "src/**/*.ts"
+    ],
+    "exclude": [
+      "src/test/**"
+    ],
+    "reporter": [
+      "text",
+      "lcov"
+    ],
+    "branches": 80,
+    "lines": 80,
+    "functions": 80,
+    "statements": 80
+  },
+  "overrides": {
+    "serialize-javascript": "^7.0.4"
+  }
+}
